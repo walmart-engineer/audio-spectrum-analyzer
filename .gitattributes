@@ -1,0 +1,10 @@
+# You develop on BOTH Windows 10 and Arch Linux. This file makes git
+# normalize line endings in the repo (LF) regardless of which OS commits,
+# so the two machines never fight over CRLF diffs.
+* text=auto eol=lf
+# Binary formats git must never "normalize"
+*.png binary
+*.jpg binary
+*.pdf binary
+*.svd binary
+*.zip binary

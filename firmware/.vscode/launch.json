@@ -1,0 +1,29 @@
+{
+    // Cortex-Debug configuration: press F5 and this happens:
+    //   1. runs the "build" task below (preLaunchTask)
+    //   2. starts OpenOCD as a background GDB server
+    //   3. flashes blinky.elf, resets the chip
+    //   4. attaches arm-none-eabi-gdb and stops at main()
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug STM32F3 (OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/blinky.elf",
+            "device": "STM32F303VC",
+            "configFiles": [
+                "board/stm32f3discovery.cfg"
+            ],
+            // The SVD file: named, bit-field-decoded peripheral registers
+            // in the XPERIPHERALS panel. The whole reason this setup is
+            // beginner-friendly.
+            "svdFile": "${workspaceFolder}/tools/STM32F303.svd",
+            "runToEntryPoint": "main",
+            "preLaunchTask": "build",
+            "showDevDebugOutput": "none"
+        }
+    ]
+}
