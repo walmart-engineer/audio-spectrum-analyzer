@@ -51,8 +51,8 @@ int main(void)
      * when interrupts exist.                                          */
     for (;;) {
         GPIOE->BSRR = (1u << 8);          /* LD4 on  */
-        delay(400000);
+        delay(200000);
         GPIOE->BSRR = (1u << (8 + 16));   /* LD4 off */
-        delay(400000);
+        delay(200000);
     }
 }
