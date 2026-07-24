@@ -10,16 +10,8 @@
  */
 
 #include "stm32f303xc.h"
+#include "drivers/tim2.h"
 
-/* Crude busy-wait. Volatile stops the optimizer deleting the loop.
- * At 8 MHz, ~400k iterations is a visible fraction of a second.
- * (Replaced by a SysTick-based delay the moment we care about time.) */
-static void delay(volatile uint32_t count)
-{
-    while (count--) {
-        __NOP();
-    }
-}
 
 int main(void)
 {
@@ -49,10 +41,11 @@ int main(void)
      * Unlike ODR ^= x (read-modify-write), BSRR is a pure write —
      * atomic, interrupt-safe, and the habit worth building now for
      * when interrupts exist.                                          */
+    delay_init_tim2();
     for (;;) {
         GPIOE->BSRR = (1u << 8);          /* LD4 on  */
-        delay(250000);
+        delay_ms(750u);
         GPIOE->BSRR = (1u << (8 + 16));   /* LD4 off */
-        delay(250000);
+        delay_ms(250u);
     }
 }
