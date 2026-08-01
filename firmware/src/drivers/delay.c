@@ -1,6 +1,6 @@
-#include "tim3.h"
+#include "delay.h"
 
-#define TIMER_CLOCK_HZ 8000000u
+#define TIMER_CLOCK_HZ     8000000u
 #define TICK_HZ_MS         1000u        /* 100 us per count */    
 #define TICK_HZ_US         1000000u                 
 #define PSC_VALUE_MS       ((TIMER_CLOCK_HZ / TICK_HZ_MS) - 1u)
