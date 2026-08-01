@@ -6,6 +6,8 @@ set(CMAKE_C_STANDARD 11)
 add_executable(blinky.elf
     src/main.c
     src/startup.c
+    src/adc.c
+    src/delay.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis)
@@ -37,6 +39,6 @@ add_custom_command(TARGET blinky.elf POST_BUILD
 # rebuild stale files -> relink -> program flash -> verify -> reset -> run
 add_custom_target(flash
     COMMAND openocd -f board/stm32f3discovery.cfg
-            -c "program $<TARGET_FILE:blinky.elf> verify reset exit"
+            -c "program {$<TARGET_FILE:blinky.elf>} verify reset exit"
     DEPENDS blinky.elf
     COMMENT "Flashing via OpenOCD/ST-Link")
