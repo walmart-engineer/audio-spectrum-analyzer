@@ -1,17 +1,5 @@
-/*
- * main.c — register-level blinky for the STM32F3 Discovery
- *
- * Blinks LD4 (blue LED, pin PE8) using only the reset-default 8 MHz HSI
- * clock. Three register operations, total:
- *   1. RCC->AHBENR   : give GPIO port E a clock (peripherals are dead
- *                      until clocked — the #1 beginner trap on STM32)
- *   2. GPIOE->MODER  : make PE8 an output
- *   3. GPIOE->BSRR   : set / reset the pin atomically
- */
-
 #include "stm32f303xc.h"
-#include "drivers/tim2.h"
-
+#include "drivers/tim3.h"
 
 int main(void)
 {
@@ -19,7 +7,7 @@ int main(void)
      * Every peripheral on STM32 is clock-gated off at reset. Writing
      * its registers before enabling the clock does nothing (reads
      * return 0) — no fault, no warning, just silence.                 */
-    RCC->AHBENR |= RCC_AHBENR_GPIOEEN;
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
     /* Read the register back: guarantees the write has landed on the
      * peripheral bus before we touch GPIOE (see RM0316 & F3 errata on
@@ -31,7 +19,7 @@ int main(void)
      * 11 analog. Port E resets to all-zeros (all inputs), so OR-ing
      * in the '01' pattern for pin 8 is sufficient and touches nothing
      * else.                                                           */
-    GPIOE->MODER |= (0x1u << (8 * 2));
+    GPIOA->MODER |= (0x1u << (5 * 2));
 
     /* Defaults are already what we want: push-pull, low speed, no
      * pull resistors. Fine for an LED.                                */
@@ -41,11 +29,12 @@ int main(void)
      * Unlike ODR ^= x (read-modify-write), BSRR is a pure write —
      * atomic, interrupt-safe, and the habit worth building now for
      * when interrupts exist.                                          */
-    delay_init_tim2();
-    for (;;) {
-        GPIOE->BSRR = (1u << 8);          /* LD4 on  */
-        delay_ms(750u);
-        GPIOE->BSRR = (1u << (8 + 16));   /* LD4 off */
-        delay_ms(250u);
+    (void)delay_init();
+
+     for (;;) {
+        GPIOA->BSRR = (1u << 5);         
+        delay_us(20);
+        GPIOA->BSRR = (1u << (5 + 16));   
+        delay_us(20);
     }
 }

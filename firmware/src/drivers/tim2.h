@@ -1,7 +1,15 @@
+/*
+    Timer 2 este folosit ca si trigger pentru ADC
+    si DAC. Ele impart acelasi clock cycle pentru
+    a nu se desincroniza.
+*/
+
+#ifndef TIM2_H
+#define TIM2_H
+
+#include "stm32f303xc.h"
 #include <stdint.h>
 
-void delay_init_tim2(void);
- 
-/* Blocks for `ms` milliseconds (clamped to [1, 10000]).
- * Interrupts continue to run normally while blocked.            */
-void delay_ms(uint32_t);
+void timer2_init(void);
+
+#endif

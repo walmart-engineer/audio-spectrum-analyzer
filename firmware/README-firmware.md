@@ -15,6 +15,7 @@ arm-none-eabi-gcc 13.2 (560 bytes of flash).
 
 ## Build & flash (command line)
     cmake -B build -G Ninja "-DCMAKE_TOOLCHAIN_FILE=arm-toolchain.cmake"
+    cmake --preset default
     ninja -C build
     ninja -C build flash        # board on the USB ST-LINK connector
 
