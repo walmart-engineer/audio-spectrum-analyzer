@@ -6,11 +6,13 @@ set(CMAKE_C_STANDARD 11)
 add_executable(blinky.elf
     src/main.c
     src/startup.c
+    src/drivers/tim2.c
+    src/drivers/tim3.c
     src/drivers/adc.c
     src/drivers/delay.c
 )
 
-target_include_directories(blinky.elf PRIVATE cmsis)
+target_include_directories(blinky.elf PRIVATE cmsis src)
 
 # The device header (stm32f3xx.h) dispatches on this define to pull in
 # the right register file (stm32f303xc.h) for our exact chip.
