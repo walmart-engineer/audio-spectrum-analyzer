@@ -1,6 +1,5 @@
 #include "adc.h"
-#include "stm32f3xx.h"
-#include "delay.h"
+
 
 #define MIC_CH 2u //Adauga canalul folosit PA1, canal 2
 

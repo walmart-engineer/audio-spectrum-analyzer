@@ -7,7 +7,7 @@ add_executable(blinky.elf
     src/main.c
     src/startup.c
     src/drivers/tim2.c
-    src/drivers/tim3.c
+    src/drivers/delay.c
     src/drivers/adc.c
 )
 
