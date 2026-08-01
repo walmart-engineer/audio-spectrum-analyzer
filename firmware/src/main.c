@@ -1,7 +1,7 @@
 
 #include "stm32f303xc.h"
-#include "adc.h"
-#include "delay.h"  
+#include "drivers/adc.h"
+#include "drivers/delay.h"  
 
 #define NR_ESANTIOANE 64
 

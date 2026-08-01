@@ -6,8 +6,8 @@ set(CMAKE_C_STANDARD 11)
 add_executable(blinky.elf
     src/main.c
     src/startup.c
-    src/adc.c
-    src/delay.c
+    src/drivers/adc.c
+    src/drivers/delay.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis)
