@@ -10,16 +10,14 @@
  */
 
 #include "stm32f303xc.h"
+#include "adc.h"
+#include "delay.h"  
 
-/* Crude busy-wait. Volatile stops the optimizer deleting the loop.
- * At 8 MHz, ~400k iterations is a visible fraction of a second.
- * (Replaced by a SysTick-based delay the moment we care about time.) */
-static void delay(volatile uint32_t count)
-{
-    while (count--) {
-        __NOP();
-    }
-}
+#define NR_ESANTIOANE 64
+
+
+volatile uint16_t buffer[NR_ESANTIOANE];
+volatile uint16_t index = 0;
 
 int main(void)
 {
@@ -27,7 +25,8 @@ int main(void)
      * Every peripheral on STM32 is clock-gated off at reset. Writing
      * its registers before enabling the clock does nothing (reads
      * return 0) — no fault, no warning, just silence.                 */
-    RCC->AHBENR |= RCC_AHBENR_GPIOEEN;
+     RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+     RCC->AHBENR |= RCC_AHBENR_GPIOEEN;
 
     /* Read the register back: guarantees the write has landed on the
      * peripheral bus before we touch GPIOE (see RM0316 & F3 errata on
@@ -39,10 +38,13 @@ int main(void)
      * 11 analog. Port E resets to all-zeros (all inputs), so OR-ing
      * in the '01' pattern for pin 8 is sufficient and touches nothing
      * else.                                                           */
-    GPIOE->MODER |= (0x1u << (8 * 2));
+    GPIOE->MODER |= (0x3u << (8 * 2));
+    GPIOE->MODER |= (0x1u << (1 * 2)); //seteaza pinul PA1 ca intrare analog
 
     /* Defaults are already what we want: push-pull, low speed, no
      * pull resistors. Fine for an LED.                                */
+
+     ADC_Init();
 
     /* --- 3. Blink forever -------------------------------------------
      * BSRR: writing bit n sets pin n; writing bit n+16 resets it.
@@ -50,9 +52,8 @@ int main(void)
      * atomic, interrupt-safe, and the habit worth building now for
      * when interrupts exist.                                          */
     for (;;) {
-        GPIOE->BSRR = (1u << 8);          /* LD4 on  */
-        delay(250000);
-        GPIOE->BSRR = (1u << (8 + 16));   /* LD4 off */
-        delay(250000);
+        buffer[index] = ADC_Read();
+        index = (index + 1) % NR_ESANTIOANE;
+
     }
 }
