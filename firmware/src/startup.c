@@ -10,6 +10,8 @@
  */
 
 #include <stdint.h>
+#include "stm32f3xx.h"
+#include "ISR/ISR_Handlers.h"
 
 /* Symbols defined by the linker script (ld/stm32f303vc.ld) */
 extern uint32_t _estack;   /* top of stack (end of RAM)                    */
@@ -18,6 +20,16 @@ extern uint32_t _sdata;    /* start of .data destination, in RAM           */
 extern uint32_t _edata;    /* end of .data in RAM                          */
 extern uint32_t _sbss;     /* start of .bss in RAM                         */
 extern uint32_t _ebss;     /* end of .bss in RAM                           */
+
+struct fault_info {
+    uint32_t cfsr;   /* why it faulted   */
+    uint32_t hfsr;   /* forced/escalated */
+    uint32_t bfar;   /* offending address */
+    uint32_t pc;     /* faulting instruction */
+    uint32_t lr;     /* caller */
+};
+
+volatile struct fault_info g_fault;
 
 int main(void);
 
@@ -34,14 +46,14 @@ void Default_Handler(void)
 /* Core exception handlers — weak aliases so real implementations can
  * replace them later (e.g. a proper HardFault dumper in week 2+)     */
 void NMI_Handler(void)        __attribute__((weak, alias("Default_Handler")));
-void HardFault_Handler(void)  __attribute__((weak, alias("Default_Handler")));
+void HardFault_Handler(void)  __attribute__((naked));
 void MemManage_Handler(void)  __attribute__((weak, alias("Default_Handler")));
 void BusFault_Handler(void)   __attribute__((weak, alias("Default_Handler")));
 void UsageFault_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void SVC_Handler(void)        __attribute__((weak, alias("Default_Handler")));
 void DebugMon_Handler(void)   __attribute__((weak, alias("Default_Handler")));
 void PendSV_Handler(void)     __attribute__((weak, alias("Default_Handler")));
-void SysTick_Handler(void)    __attribute__((weak, alias("Default_Handler")));
+
 
 /* Peripheral interrupts we'll implement in later milestones get added
  * here the same way, at their correct vector positions, e.g.:
@@ -65,18 +77,18 @@ typedef void (*vector_t)(void);
 __attribute__((section(".isr_vector"), used))
 static const vector_t vector_table[16 + 82] = {
     (vector_t)&_estack,     /*  0: initial stack pointer               */
-    Reset_Handler,          /*  1: reset                               */
-    NMI_Handler,            /*  2: non-maskable interrupt              */
-    HardFault_Handler,      /*  3: all faults, unless escalated ones on*/
-    MemManage_Handler,      /*  4: MPU violation                       */
-    BusFault_Handler,       /*  5: bus error                           */
-    UsageFault_Handler,     /*  6: undefined instr, div-by-0, etc.     */
+    &Reset_Handler,          /*  1: reset                               */
+    &NMI_Handler,            /*  2: non-maskable interrupt              */
+    &HardFault_Handler,      /*  3: all faults, unless escalated ones on*/
+    &MemManage_Handler,      /*  4: MPU violation                       */
+    &BusFault_Handler,       /*  5: bus error                           */
+    &UsageFault_Handler,     /*  6: undefined instr, div-by-0, etc.     */
     0, 0, 0, 0,             /*  7-10: reserved                         */
-    SVC_Handler,            /* 11: supervisor call                     */
-    DebugMon_Handler,       /* 12: debug monitor                       */
+    &SVC_Handler,            /* 11: supervisor call                     */
+    &DebugMon_Handler,       /* 12: debug monitor                       */
     0,                      /* 13: reserved                            */
-    PendSV_Handler,         /* 14: pendable service                    */
-    SysTick_Handler,        /* 15: system tick timer                   */
+    &PendSV_Handler,         /* 14: pendable service                    */
+    &SysTick_Handler,        /* 15: system tick timer                   */
     /* 16..97: device IRQs — zero-filled for now, added as needed      */
 };
 
@@ -110,3 +122,31 @@ void Reset_Handler(void)
      * somewhere the debugger can see rather than executing garbage.  */
     for (;;) { }
 }
+
+
+__attribute__((used, noreturn))
+void hardfault_c(uint32_t *frame)
+{
+    g_fault.cfsr = SCB->CFSR;
+    g_fault.hfsr = SCB->HFSR;
+    g_fault.bfar = SCB->BFAR;
+    g_fault.pc   = frame[6];
+    g_fault.lr   = frame[5];
+
+    if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) __BKPT(0);
+    NVIC_SystemReset();
+    for (;;) { }
+}
+
+
+void HardFault_Handler(void)
+{
+    __asm volatile (
+        "tst   lr, #4        \n"   /* EXC_RETURN bit 2 selects the stack */
+        "ite   eq            \n"
+        "mrseq r0, msp       \n"
+        "mrsne r0, psp       \n"
+        "b     hardfault_c   \n"
+    );
+}
+
