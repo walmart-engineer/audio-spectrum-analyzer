@@ -11,7 +11,7 @@ int main(void)
     volatile uint16_t buffer[NR_ESANTIOANE];
     volatile uint16_t index = 0;
     /* --- 1. Enable the AHB clock to GPIO port E ---------------------
-     * Every peripheral on STM32 is clock-gated off at reset. Writing
+     * Every peripheral onwefqw STM32 is clock-gated off at reset. Writing
      * its registers before enabling the clock does nothing (reads
      * return 0) — no fault, no warning, just silence.                 */
      RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
