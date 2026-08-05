@@ -9,7 +9,7 @@ add_executable(blinky.elf
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
-    src/ISR/ISR_Handlers.c
+    src/system/system.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)

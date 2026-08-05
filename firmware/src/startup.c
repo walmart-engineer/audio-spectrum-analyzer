@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 #include "stm32f3xx.h"
-#include "ISR/ISR_Handlers.h"
+#include "system/system.h"
 
 /* Symbols defined by the linker script (ld/stm32f303vc.ld) */
 extern uint32_t _estack;   /* top of stack (end of RAM)                    */
@@ -21,15 +21,7 @@ extern uint32_t _edata;    /* end of .data in RAM                          */
 extern uint32_t _sbss;     /* start of .bss in RAM                         */
 extern uint32_t _ebss;     /* end of .bss in RAM                           */
 
-struct fault_info {
-    uint32_t cfsr;   /* why it faulted   */
-    uint32_t hfsr;   /* forced/escalated */
-    uint32_t bfar;   /* offending address */
-    uint32_t pc;     /* faulting instruction */
-    uint32_t lr;     /* caller */
-};
 
-volatile struct fault_info g_fault;
 
 int main(void);
 
@@ -116,28 +108,19 @@ void Reset_Handler(void)
      *    with. PLL bring-up to 72 MHz is its own milestone, done
      *    deliberately in C where we can read every RCC bit we set.   */
 
+    // ------ External 8 MHz Crystal Oscilator
+    // RCC->CR |= RCC_CR_HSEBYP;
+    // RCC->CR |= RCC_CR_HSEON;
+    // while (!(RCC->CR & RCC_CR_HSERDY)) { }
+
+    clock_init_64mhz_hsi();
+
     main();
 
     /* main() must never return on bare metal — but if it does, stop
      * somewhere the debugger can see rather than executing garbage.  */
     for (;;) { }
 }
-
-
-__attribute__((used, noreturn))
-void hardfault_c(uint32_t *frame)
-{
-    g_fault.cfsr = SCB->CFSR;
-    g_fault.hfsr = SCB->HFSR;
-    g_fault.bfar = SCB->BFAR;
-    g_fault.pc   = frame[6];
-    g_fault.lr   = frame[5];
-
-    if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) __BKPT(0);
-    NVIC_SystemReset();
-    for (;;) { }
-}
-
 
 void HardFault_Handler(void)
 {
@@ -149,4 +132,6 @@ void HardFault_Handler(void)
         "b     hardfault_c   \n"
     );
 }
+
+
 
