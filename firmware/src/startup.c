@@ -10,6 +10,8 @@
  */
 
 #include <stdint.h>
+#include "stm32f3xx.h"
+#include "system/system.h"
 
 /* Symbols defined by the linker script (ld/stm32f303vc.ld) */
 extern uint32_t _estack;   /* top of stack (end of RAM)                    */
@@ -18,6 +20,8 @@ extern uint32_t _sdata;    /* start of .data destination, in RAM           */
 extern uint32_t _edata;    /* end of .data in RAM                          */
 extern uint32_t _sbss;     /* start of .bss in RAM                         */
 extern uint32_t _ebss;     /* end of .bss in RAM                           */
+
+
 
 int main(void);
 
@@ -34,14 +38,16 @@ void Default_Handler(void)
 /* Core exception handlers — weak aliases so real implementations can
  * replace them later (e.g. a proper HardFault dumper in week 2+)     */
 void NMI_Handler(void)        __attribute__((weak, alias("Default_Handler")));
-void HardFault_Handler(void)  __attribute__((weak, alias("Default_Handler")));
+void HardFault_Handler(void)  __attribute__((naked));
 void MemManage_Handler(void)  __attribute__((weak, alias("Default_Handler")));
 void BusFault_Handler(void)   __attribute__((weak, alias("Default_Handler")));
 void UsageFault_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void SVC_Handler(void)        __attribute__((weak, alias("Default_Handler")));
 void DebugMon_Handler(void)   __attribute__((weak, alias("Default_Handler")));
 void PendSV_Handler(void)     __attribute__((weak, alias("Default_Handler")));
-void SysTick_Handler(void)    __attribute__((weak, alias("Default_Handler")));
+void SysTick_Handler(void)     __attribute__((weak, alias("Default_Handler")));
+
+
 
 /* Peripheral interrupts we'll implement in later milestones get added
  * here the same way, at their correct vector positions, e.g.:
@@ -65,18 +71,18 @@ typedef void (*vector_t)(void);
 __attribute__((section(".isr_vector"), used))
 static const vector_t vector_table[16 + 82] = {
     (vector_t)&_estack,     /*  0: initial stack pointer               */
-    Reset_Handler,          /*  1: reset                               */
-    NMI_Handler,            /*  2: non-maskable interrupt              */
-    HardFault_Handler,      /*  3: all faults, unless escalated ones on*/
-    MemManage_Handler,      /*  4: MPU violation                       */
-    BusFault_Handler,       /*  5: bus error                           */
-    UsageFault_Handler,     /*  6: undefined instr, div-by-0, etc.     */
+    &Reset_Handler,          /*  1: reset                               */
+    &NMI_Handler,            /*  2: non-maskable interrupt              */
+    &HardFault_Handler,      /*  3: all faults, unless escalated ones on*/
+    &MemManage_Handler,      /*  4: MPU violation                       */
+    &BusFault_Handler,       /*  5: bus error                           */
+    &UsageFault_Handler,     /*  6: undefined instr, div-by-0, etc.     */
     0, 0, 0, 0,             /*  7-10: reserved                         */
-    SVC_Handler,            /* 11: supervisor call                     */
-    DebugMon_Handler,       /* 12: debug monitor                       */
+    &SVC_Handler,            /* 11: supervisor call                     */
+    &DebugMon_Handler,       /* 12: debug monitor                       */
     0,                      /* 13: reserved                            */
-    PendSV_Handler,         /* 14: pendable service                    */
-    SysTick_Handler,        /* 15: system tick timer                   */
+    &PendSV_Handler,         /* 14: pendable service                    */
+    &SysTick_Handler,        /* 15: system tick timer                   */
     /* 16..97: device IRQs — zero-filled for now, added as needed      */
 };
 
@@ -104,9 +110,30 @@ void Reset_Handler(void)
      *    with. PLL bring-up to 72 MHz is its own milestone, done
      *    deliberately in C where we can read every RCC bit we set.   */
 
+    // ------ External 8 MHz Crystal Oscilator
+    // RCC->CR |= RCC_CR_HSEBYP;
+    // RCC->CR |= RCC_CR_HSEON;
+    // while (!(RCC->CR & RCC_CR_HSERDY)) { }
+
+    clock_init_64mhz_hsi();
+
     main();
 
     /* main() must never return on bare metal — but if it does, stop
      * somewhere the debugger can see rather than executing garbage.  */
     for (;;) { }
 }
+
+void HardFault_Handler(void)
+{
+    __asm volatile (
+        "tst   lr, #4        \n"   /* EXC_RETURN bit 2 selects the stack */
+        "ite   eq            \n"
+        "mrseq r0, msp       \n"
+        "mrsne r0, psp       \n"
+        "b     hardfault_c   \n"
+    );
+}
+
+
+

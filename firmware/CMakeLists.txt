@@ -9,8 +9,9 @@ add_executable(blinky.elf
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
-    src/drivers/spi.c
-    src/misc/MAX7219.c
+    src/system/system.c
+    src/drivers/gpio.c
+    src/dsp/decimate.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)
@@ -24,14 +25,15 @@ target_compile_options(blinky.elf PRIVATE
     -Og -g3            # optimize-for-debug: fast enough, still steppable
 )
 
-# Hand the linker OUR memory map, and re-link if the script changes.
+# =========================== LINKER======================================
+# Hand the linker OUR linker script, and re-link if the script changes.
 target_link_options(blinky.elf PRIVATE
-    -T${CMAKE_SOURCE_DIR}/ld/stm32f303vc.ld
+    -T${CMAKE_SOURCE_DIR}/ld/stm32f303_2.ld
     -Wl,-Map=${CMAKE_BINARY_DIR}/blinky.map   # full address map, worth reading once
 )
 set_target_properties(blinky.elf PROPERTIES
-    LINK_DEPENDS ${CMAKE_SOURCE_DIR}/ld/stm32f303vc.ld)
-
+    LINK_DEPENDS ${CMAKE_SOURCE_DIR}/ld/stm32f303_2.ld)
+# ========================================================================
 # Post-build: raw binary image + the flash/RAM fuel gauge.
 add_custom_command(TARGET blinky.elf POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:blinky.elf> ${CMAKE_BINARY_DIR}/blinky.bin
