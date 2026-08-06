@@ -5,7 +5,12 @@
 #include "stm32f303xc.h"
 #include "drivers/delay.h"
 
-void ADC_Init(void); //initializare ADC + configurare
-uint16_t ADC_Read(void); //returneaza o conversie
+void adc_init(void); //initializare ADC + configurare
+void adc_restart_audio_stream(void);
+void adc_start_audio_stream(void);
+void measure_vdda(uint32_t* vdda_mv);
+
+
+void ADC1_2_ISR(void);
 
 #endif

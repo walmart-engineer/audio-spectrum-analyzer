@@ -5,10 +5,10 @@
 ENTRY(Reset_Handler)        /* first function to run; also marks it as
                                 "used" so --gc-sections won't delete it */
 
-_estack = 0x2000A000;       /* top of RAM — initial stack pointer */
+_estack = 0x10002000;       /* top of CCMRAM — initial stack pointer */
 
 _Min_Heap_Size  = 0x000;    /* no malloc on this project */
-_Min_Stack_Size = 0x800;    /* 2 KB reserved for the stack */
+_Min_Stack_Size = 0x1000;    /* 4 KB reserved for the stack */
 
 MEMORY
 {

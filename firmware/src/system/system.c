@@ -18,15 +18,6 @@ void hardfault_c(uint32_t *frame)
 }
 
 
-
-
-void Init_Handlers(void){
-}
-
-void SysTick_Handler(void){
-    ++g_micros;
-}
-
 /* Timing */
 uint32_t micros(void){
     return g_micros;
@@ -71,4 +62,9 @@ void clock_init_64mhz_hsi(void)
     /* 6. Switch. */
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_PLL;
     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) { }
+}
+
+
+void generic_fault_handler(){
+    for(;;){ }
 }

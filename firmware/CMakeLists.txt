@@ -10,6 +10,8 @@ add_executable(blinky.elf
     src/drivers/delay.c
     src/drivers/adc.c
     src/system/system.c
+    src/drivers/gpio.c
+    src/dsp/decimate.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)

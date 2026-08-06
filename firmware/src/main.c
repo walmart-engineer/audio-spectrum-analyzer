@@ -2,24 +2,30 @@
 #include "drivers/adc.h"
 #include "drivers/delay.h"
 #include "system/system.h"  
+#include "drivers/gpio.h"
 
+#define MIC_PIN 1u
+#define MIC_PORT 'A'
 
+static uint32_t vdda; // VDDA in mV
 
 int main(void)
 {
-    volatile uint8_t status = SysTick_Config(SYS_CLK/1000000U);
-    uint32_t current, prev;
 
-    RCC->AHBENR |= RCC_AHBENR_GPIOEEN;                                          
-    (void)RCC->AHBENR;
+    // volatile uint16_t adc_value;
 
-    GPIOE->MODER |= (0x1u << (9 * 2));
+    // delay_init();
 
-    for (;;) {
-        current = millis();
-        if(current - prev > 99U){
-            GPIOE->ODR ^= (1u << 9);
-            prev = current;
-        }
+    adc_init();
+
+    measure_vdda(&vdda);
+
+    (void)gpio_set('E', 10u, DIGITAL_OUT);
+
+    for(;;){
+        gpio_write('E', 10u, HIGH);
+        delay_ms(100);
+        gpio_write('E', 10u, LOW);
+        delay_ms(100);
     }
 }
