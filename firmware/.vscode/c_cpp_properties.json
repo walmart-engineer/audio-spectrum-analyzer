@@ -6,7 +6,7 @@
             "includePath": ["${workspaceFolder}/cmsis", "${workspaceFolder}/src"],
             "defines": ["STM32F303xC"],
             // PLEASE FILL YOUR COMPILER PATH
-            "compilerPath": "C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/13.2 Rel1/bin/arm-none-eabi-gcc.exe",
+            "compilerPath": "C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/13.3 Rel1/bin/arm-none-eabi-gcc.exe",
             "cStandard": "c11",
             "intelliSenseMode": "gcc-arm"
         }

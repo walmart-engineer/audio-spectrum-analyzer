@@ -9,6 +9,7 @@
 
 static uint32_t vdda; // VDDA in mV
 
+/* ---- main --------------------------------------------------------- */
 int main(void)
 {
 
