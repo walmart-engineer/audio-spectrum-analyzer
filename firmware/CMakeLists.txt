@@ -12,6 +12,7 @@ add_executable(blinky.elf
     src/system/system.c
     src/drivers/gpio.c
     src/dsp/decimate.c
+    src/dsp/fft.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)

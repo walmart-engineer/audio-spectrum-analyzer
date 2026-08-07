@@ -1,5 +1,6 @@
 #include "dac.h"
-#include "drivers/delay.h"
+
+static volatile uint16_t last; // for the ring of the dac
 
 void dac_init(void){
 
@@ -25,4 +26,14 @@ void dac_init(void){
 
 inline void dac_write(uint16_t value){
     DAC->DHR12R1 =value;
+}
+
+void dac_push(uint16_t x){
+    
+    if(last > DAC_BUFFER_SIZE - 1) last = 0u;
+
+    dac_buffer[last] = x;
+    ++last;
+
+
 }
