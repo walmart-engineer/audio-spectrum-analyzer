@@ -3,30 +3,38 @@
 #include "drivers/delay.h"
 #include "system/system.h"  
 #include "drivers/gpio.h"
+#include "misc/MAX7219.h"
 
 #define MIC_PIN 1u
 #define MIC_PORT 'A'
 
-static uint32_t vdda; // VDDA in mV
+
 
 /* ---- main --------------------------------------------------------- */
 int main(void)
 {
+    uint32_t vdda; // VDDA in mV
+    SPI_Init();
+    MAX7219_Init();
 
-    // volatile uint16_t adc_value;
+    gpio_set(MIC_PORT, MIC_PIN, ANALOG);
 
-    // delay_init();
-
+    
+    
     adc_init();
-
+    
     measure_vdda(&vdda);
 
-    (void)gpio_set('E', 10u, DIGITAL_OUT);
+    volatile uint16_t adc_value; 
+
+    uint32_t voltage;
 
     for(;;){
-        gpio_write('E', 10u, HIGH);
-        delay_ms(100);
-        gpio_write('E', 10u, LOW);
+
+        adc_value = adc_snapshot();
+        voltage = ((adc_value * vdda) >> 12);
+        render(voltage);
         delay_ms(100);
     }
+
 }

@@ -7,10 +7,10 @@
 static inline void MAX7219_Select(void);
 static inline void MAX7219_Deselect(void);
 
-static void MAX7219_Send(uint8_t addr, uint8_t data);
+void MAX7219_Send(uint8_t addr, uint8_t data);
 
-static void MAX7219_Init(void);
+void MAX7219_Init(void);
 
-static void render(uint32_t number);
+void render(uint32_t number);
 
 #endif
