@@ -3,7 +3,7 @@
 
 #define HIGH 1u
 #define LOW 0u
-#define ANALOG_OUT 3u
+#define ANALOG 3u
 #define DIGITAL_OUT 1u
 #define DIGITAL_IN 0u
 

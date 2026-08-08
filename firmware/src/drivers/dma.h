@@ -5,13 +5,13 @@
 #include "stm32f303xc.h"
 #include "system/system.h"
 #include "dsp/decimate.h"
-
+#include "config.h"
+#include "adc.h"
 
 
 void dma_adc_init(void);
 void dma_dac_init(void);
 void dma_spi_init(void);
-
 void dma_adc_rearm(void);
 
 void DMA1_Channel1_ISR(void);

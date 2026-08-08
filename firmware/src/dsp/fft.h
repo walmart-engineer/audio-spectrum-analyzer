@@ -6,9 +6,9 @@
 
 
 
-static volatile ring_int16 fft_sample_ring;
+static volatile int16_t fft_sample_ring[FFT_SAMPLE_RING_SIZE];
 
-void fft_ring_push(uint16_t x);
+void fft_ring_push(int16_t x);
 void unwind_ring(float* frame);
 
 
