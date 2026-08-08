@@ -8,6 +8,7 @@
 
 static volatile uint16_t adc_buffer[2 * ADC_BUFFER_SIZE];
 
+
 void adc_init(void); //initializare ADC
 void adc_restart_audio_stream(void);
 void adc_start_audio_stream(void);

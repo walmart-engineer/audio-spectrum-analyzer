@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include "stm32f3xx.h"
 #include "system/system.h"
+#include "drivers/dma.h"
 
 /* Symbols defined by the linker script (ld/stm32f303vc.ld) */
 extern uint32_t _estack;   /* top of stack (end of RAM)                    */
@@ -84,6 +85,10 @@ static const vector_t vector_table[16 + 82] = {
     &PendSV_Handler,         /* 14: pendable service                    */
     &SysTick_Handler,        /* 15: system tick timer                   */
     /* 16..97: device IRQs — zero-filled for now, added as needed      */
+    0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0,
+    &DMA1_Channel1_ISR,
+    0, 0, 0, 0, 0, 0,
+    &ADC1_2_ISR,
 };
 
 /* ------------------------------------------------------------------ */

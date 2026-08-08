@@ -104,16 +104,16 @@ uint8_t gpio_digital_read(uint8_t port, uint8_t pin_number){
     else if(port == 'B'){
         idr_value = (uint16_t)GPIOB->IDR;
     }
-    else if(port == 'B'){
+    else if(port == 'C'){
         idr_value = (uint16_t)GPIOC->IDR;
     }
-    else if(port == 'B'){
+    else if(port == 'D'){
         idr_value = (uint16_t)GPIOD->IDR;
     }
-    else if(port == 'B'){
+    else if(port == 'E'){
         idr_value = (uint16_t)GPIOE->IDR;
     }
-    else if(port == 'B'){
+    else if(port == 'F'){
         idr_value = (uint16_t)GPIOF->IDR;
     }
     else{
