@@ -34,8 +34,8 @@ void adc_init(void)
     ADC1->SMPR1 |= (7u << (3u * MIC_ADC_CH));
     ADC1->SQR1  =  (MIC_ADC_CH << 6u);
     
-    //ADC1->IER = ADC_IER_OVRIE;
-    //NVIC_EnableIRQ(ADC1_2_IRQn);
+    ADC1->IER = ADC_IER_OVRIE;
+    NVIC_EnableIRQ(ADC1_2_IRQn);
     ADC1->CFGR = 0u;
 }
 
@@ -69,7 +69,7 @@ void adc_start_audio_stream(void){
 
 
 
-void adc_restart(void){
+void adc_restart_audio_stream(void){
     /* 1. Stop the ADC's regular conversions. ADSTP is only writable
           while ADSTART = 1, so guard it. Hardware clears both bits
           when the abort completes. */
