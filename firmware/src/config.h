@@ -3,14 +3,12 @@
 
 #include <stdint.h>
 
-static const uint16_t ADC_BUFFER_SIZE = 512u;
-static const uint16_t DAC_BUFFER_SIZE = 2048u;
-static const uint16_t FFT_SAMPLE_RING_SIZE = 4096u;
-static const uint16_t FFT_FRAME = 4096u;
+#define SYS_CLK 64000000U
 
-typedef struct ring_int16 {
-    uint16_t arr[FFT_SAMPLE_RING_SIZE];
-    uint16_t last;
-} ring_int16;
+#define ADC_BUFFER_SIZE 512u
+#define DAC_BUFFER_SIZE 2048u
+#define FFT_SAMPLE_RING_SIZE 4096u
+#define FFT_FRAME_SIZE 4096u
+
 
 #endif

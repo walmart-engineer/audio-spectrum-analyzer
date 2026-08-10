@@ -1,6 +1,6 @@
 #include "dac.h"
 
-static volatile uint16_t last; // for the ring of the dac
+static volatile uint16_t last = 0; // for the ring of the dac
 
 void dac_init(void){
 

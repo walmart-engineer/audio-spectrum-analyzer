@@ -19,9 +19,9 @@ void hardfault_c(uint32_t *frame)
 
 
 /* Timing */
-uint32_t micros(void){
-    return g_micros;
-}
+// uint32_t micros(void){
+//     return g_micros;
+// }
 
 uint32_t millis(void){
     return g_micros / 1000U;
@@ -67,4 +67,19 @@ void clock_init_64mhz_hsi(void)
 
 void generic_fault_handler(){
     for(;;){ }
+}
+
+
+void cycle_counter_init(void) {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;   /* enable trace subsystem */
+    DWT->CYCCNT = 0;
+    DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;             /* start counting */
+}
+
+static inline uint32_t micros(void) {
+    return DWT->CYCCNT / (SYS_CLK / 1000000u);      
+}
+
+static inline uint32_t cycles_now(void) {
+    return DWT->CYCCNT;
 }
