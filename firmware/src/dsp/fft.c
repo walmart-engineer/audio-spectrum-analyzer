@@ -1,10 +1,10 @@
 #include "fft.h"
 
-static volatile uint16_t last;
+static volatile uint16_t last = 0u;
 
 void fft_ring_push(int16_t x){
 
-    if(last > FFT_SAMPLE_RING_SIZE - 1) last = 0u;
+    if(last > 4095u) last = 0u;
 
     fft_sample_ring[last] = x;
     ++last;
