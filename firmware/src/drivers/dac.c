@@ -25,15 +25,15 @@ void dac_init(void){
 }
 
 inline void dac_write(uint16_t value){
-    DAC->DHR12R1 =value;
+    DAC->DHR12R1 = value;
 }
 
 void dac_push(uint16_t x){
-    
-    if(last > DAC_BUFFER_SIZE - 1) last = 0u;
 
-    dac_buffer[last] = x;
-    ++last;
-
+    for(uint8_t i = 0; i < 4; ++i){
+        if(last > DAC_BUFFER_SIZE - 1) last = 0u;
+        dac_buffer[last] = x;
+        ++last;
+    }
 
 }

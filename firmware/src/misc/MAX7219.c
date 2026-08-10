@@ -12,14 +12,14 @@ static inline void MAX7219_Deselect(void){
     GPIOD->BSRR = (1u << 8);
 }
 
-static void MAX7219_Send(uint8_t addr, uint8_t data){
+void MAX7219_Send(uint8_t addr, uint8_t data){
     MAX7219_Select();                             /* LOAD LOW              */
     (void)SPI_Xfer((uint16_t)(addr << 8) | data);  /* 16-bit frame out     */
     SPI_WaitDone();                               /* wait for shift done   */
     MAX7219_Deselect();                           /* LOAD HIGH -> latches  */
 }
 
-static void MAX7219_Init(void){
+void MAX7219_Init(void){
     MAX7219_Send(0x0F, 0x00);   /* Display Test  = normal operation      */
     MAX7219_Send(0x0B, 0x07);   /* Scan Limit    = all 8 digits (0..7)   */
     MAX7219_Send(0x09, 0xFF);   /* Decode Mode   = BCD decode all digits */
@@ -33,8 +33,8 @@ static void MAX7219_Init(void){
 
 void render(uint32_t number){
 
-    SPI_Init();          /* configures GPIOs + SPI2 peripheral */
-    MAX7219_Init();      /* configures the display chip        */
+              /* configures GPIOs + SPI2 peripheral */
+          /* configures the display chip        */
 
     uint8_t digits[8] = {0};
 

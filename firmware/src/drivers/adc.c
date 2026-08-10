@@ -12,7 +12,7 @@ void adc_init(void)
 {
     delay_init();
 
-    // ---- ADC Config ----
+    // ---- ADC Bring up ----
 
     RCC->AHBENR |= RCC_AHBENR_ADC12EN;
 
@@ -34,8 +34,19 @@ void adc_init(void)
     ADC1->SMPR1 |= (7u << (3u * MIC_ADC_CH));
     ADC1->SQR1  =  (MIC_ADC_CH << 6u);
     
-    //ADC1->IER = ADC_IER_OVRIE;
-    //NVIC_EnableIRQ(ADC1_2_IRQn);
+    ADC1->IER = ADC_IER_OVRIE;
+    NVIC_EnableIRQ(ADC1_2_IRQn);
+    ADC1->CFGR = 0u;
+}
+
+
+uint16_t adc_snapshot(void){
+    
+    ADC1->ISR |= ADC_ISR_EOC;
+    ADC1->CR = ADC_CR_ADVREGEN_0 | ADC_CR_ADSTART;
+    while(!(ADC1->ISR & ADC_ISR_EOC)){}
+    return ADC1->DR;
+
 }
 
 void adc_start_audio_stream(void){
@@ -45,9 +56,11 @@ void adc_start_audio_stream(void){
            | (11u << 6)   /* EXTSEL = 1011 = EXT11 = TIM2_TRGO        */
            | (1u << 10)   /* EXTEN  = 01 -> rising edge               */
            | (1u << 12)   /* OVRMOD = 1  -> overwrite on overrun      */
-           | (1u <<  1)   /* DMACFG = 1  -> DMA circular mode         */
+           | (0u <<  1)   /* DMACFG = 1  -> DMA circular mode         */
            | (1u <<  0);  /* DMAEN  = 1                               */
                           /* CONT stays 0: one conversion per trigger */
+
+    for(uint8_t i = 0; i < 8; ++i) { } // Little delay
 
     DMA1_Channel1->CCR |= DMA_CCR_EN;                 /* arm the DMA...           */
     ADC1->CR = ADC_CR_ADVREGEN_0 | ADC_CR_ADSTART;    /* ...then arm the ADC...   */
@@ -56,7 +69,7 @@ void adc_start_audio_stream(void){
 
 
 
-void adc_restart(void){
+void adc_restart_audio_stream(void){
     /* 1. Stop the ADC's regular conversions. ADSTP is only writable
           while ADSTART = 1, so guard it. Hardware clears both bits
           when the abort completes. */
@@ -95,6 +108,7 @@ void measure_vdda(uint32_t* vdda_mv){
 
     ADC1->ISR = ADC_ISR_EOC;
     ADC1->CR  = ADC_CR_ADVREGEN_0 | ADC_CR_ADSTART;
+    while (!(ADC1->ISR & ADC_ISR_EOC)){}
     uint16_t raw = ADC1->DR;
     uint16_t cal = (uint16_t)(*VREFINT_CAL_ADDR);
     *vdda_mv = (3300u * cal) / raw;
