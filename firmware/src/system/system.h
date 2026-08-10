@@ -20,8 +20,8 @@ void hardfault_c(uint32_t *frame)  __attribute__((used, noreturn));
 void clock_init_64mhz_hsi(void);
 void clock_init_72mhz_hse(void);
 void cycle_counter_init(void);
-static inline uint32_t micros(void);
-static inline uint32_t cycles_now(void);
+inline uint32_t micros(void);
+inline uint32_t cycles_now(void);
 void generic_fault_handler();
 
 //inline uint32_t micros(void);

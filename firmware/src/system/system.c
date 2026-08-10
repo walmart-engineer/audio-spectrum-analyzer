@@ -76,10 +76,10 @@ void cycle_counter_init(void) {
     DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;             /* start counting */
 }
 
-static inline uint32_t micros(void) {
+uint32_t micros(void) {
     return DWT->CYCCNT / (SYS_CLK / 1000000u);      
 }
 
-static inline uint32_t cycles_now(void) {
+uint32_t cycles_now(void) {
     return DWT->CYCCNT;
 }

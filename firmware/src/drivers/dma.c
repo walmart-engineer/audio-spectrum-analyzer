@@ -1,6 +1,7 @@
 #include "dma.h"
 
-
+static volatile uint32_t prev_cycles = 0u;
+static volatile uint32_t current_cycles = 0u;
 
 void dma_adc_init(void){
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;
@@ -19,7 +20,7 @@ void dma_adc_init(void){
     DMA1_Channel1->CCR   = (1u<<10) 
                          | (1u<<8)       /* 16-bit both sides */
                          | DMA_CCR_MINC 
-                         | DMA_CCR_CIRC
+                         //| DMA_CCR_CIRC
                          | DMA_CCR_HTIE 
                          | DMA_CCR_TCIE 
                          | DMA_CCR_TEIE
@@ -43,6 +44,7 @@ void dma_adc_rearm(void){
 
 void DMA1_Channel1_ISR(void){
 
+    prev_cycles = micros();
     const uint32_t flags = DMA1->ISR;
     /*CHECKS FOR ERRORS AND RESETS THE FLAG
     IF ERRORS FOUND */
@@ -55,15 +57,16 @@ void DMA1_Channel1_ISR(void){
     AND CLEARS THE HALF INTERRUPT FLAG*/
     if (flags & DMA_ISR_HTIF1) {
         DMA1->IFCR = DMA_IFCR_CHTIF1;
-        gata = 1;
-        return;
         //decimate_block((const uint16_t *)&adc_buffer[0]);
+        current_cycles = micros();
+        return;
     }
     /*CHECKS IF THE TRANSFER IS FULLY DONE AND
     CLEARS THE COMPLETE TRANSFER FLAG*/
     if (flags & DMA_ISR_TCIF1) {
         DMA1->IFCR = DMA_IFCR_CTCIF1;
-        gata = 0;
+        current_cycles = micros();
         //decimate_block((const uint16_t *)&adc_buffer[ADC_BUFFER_SIZE]);
+        return;
     }
 }
