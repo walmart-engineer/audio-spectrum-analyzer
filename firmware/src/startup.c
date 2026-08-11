@@ -43,10 +43,8 @@ void DebugMon_Handler(void)   __attribute__((weak, alias("Default_Handler")));
 void PendSV_Handler(void)     __attribute__((weak, alias("Default_Handler")));
 void SysTick_Handler(void)    __attribute__((weak, alias("Default_Handler")));
 
-/* Peripheral interrupts we'll implement in later milestones get added
- * here the same way, at their correct vector positions, e.g.:
- *   void DMA1_Channel1_IRQHandler(void) __attribute__((weak, alias("Default_Handler")));
- */
+/* Peripheral interrupts — added as needed at their correct positions.   */
+void DMA1_Channel5_IRQHandler(void) __attribute__((weak, alias("Default_Handler")));
 
 void Reset_Handler(void);
 
@@ -77,7 +75,10 @@ static const vector_t vector_table[16 + 82] = {
     0,                      /* 13: reserved                            */
     PendSV_Handler,         /* 14: pendable service                    */
     SysTick_Handler,        /* 15: system tick timer                   */
-    /* 16..97: device IRQs — zero-filled for now, added as needed      */
+    /* 16..97: device IRQs — added as needed                           */
+    [16 +  0] = 0,                  /* WWDG                            */
+    /* ... IRQs 1-14 left as 0 (zero-filled by the compiler)            */
+    [16 + 15] = DMA1_Channel5_IRQHandler,   /* DMA1 Ch5: SPI2_TX       */
 };
 
 /* ------------------------------------------------------------------ */
