@@ -5,8 +5,9 @@
 #include "stm32f303xc.h"
 #include "drivers/delay.h"
 #include "config.h"
+#include "gpio.h"
 
-static volatile uint16_t adc_buffer[2 * ADC_BUFFER_SIZE];
+extern volatile uint16_t adc_buffer[2 * ADC_BUFFER_SIZE];
 
 
 void adc_init(void); //initializare ADC

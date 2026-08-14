@@ -8,7 +8,7 @@
 #include "config.h"
 #include "adc.h"
 
-static volatile uint8_t gata;
+extern volatile uint8_t gata;
 
 void dma_adc_init(void);
 void dma_dac_init(void);

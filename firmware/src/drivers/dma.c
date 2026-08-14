@@ -1,6 +1,7 @@
 #include "dma.h"
+#include "dac.h"
 
-
+volatile uint8_t gata;
 
 void dma_adc_init(void){
     RCC->AHBENR |= RCC_AHBENR_DMA1EN;
@@ -55,15 +56,40 @@ void DMA1_Channel1_ISR(void){
     AND CLEARS THE HALF INTERRUPT FLAG*/
     if (flags & DMA_ISR_HTIF1) {
         DMA1->IFCR = DMA_IFCR_CHTIF1;
+        decimate_block((const uint16_t *)&adc_buffer[0]);
         gata = 1;
         return;
-        //decimate_block((const uint16_t *)&adc_buffer[0]);
     }
     /*CHECKS IF THE TRANSFER IS FULLY DONE AND
     CLEARS THE COMPLETE TRANSFER FLAG*/
     if (flags & DMA_ISR_TCIF1) {
         DMA1->IFCR = DMA_IFCR_CTCIF1;
+        decimate_block((const uint16_t *)&adc_buffer[ADC_BUFFER_SIZE]);
+    
         gata = 0;
-        //decimate_block((const uint16_t *)&adc_buffer[ADC_BUFFER_SIZE]);
     }
+}
+
+void dma_dac_init(void){
+    RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+    (void)RCC->APB2ENR;
+
+        SYSCFG->CFGR1 |= SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP;
+
+    DMA1_Channel3->CCR = 0u;
+    DMA1->IFCR = DMA_IFCR_CGIF3;
+
+    DMA1_Channel3->CPAR = (uint32_t)&DAC->DHR12R1; //legatura catre periferica
+    DMA1_Channel3->CMAR = (uint32_t)dac_buffer; //legatura catre memorie
+    DMA1_Channel3->CNDTR = DAC_BUFFER_SIZE; 
+
+    DMA1_Channel3->CCR = DMA_CCR_DIR //directia de la memorie la periferica (DAC)
+                       | DMA_CCR_MINC 
+                       | DMA_CCR_CIRC
+                       | DMA_CCR_PSIZE_0
+                       | DMA_CCR_MSIZE_0
+                       | (2u << 12);
+
+    DMA1_Channel3->CCR |= DMA_CCR_EN; // activeaza canalul
 }

@@ -1,6 +1,8 @@
 #include "adc.h"
 #include "dma.h"
 
+volatile uint16_t adc_buffer[2u * ADC_BUFFER_SIZE]; // buffer comun folosit de ADC DMA si procesare
+
 #define VREFINT_CAL_ADDR ((uint16_t *)0x1FFFF7BAu)
 #define VREFINT_CH 18u
 
@@ -31,7 +33,9 @@ void adc_init(void)
     ADC1->CR  |= ADC_CR_ADEN;
     while (!(ADC1->ISR & ADC_ISR_ADRDY)) { }
 
-    ADC1->SMPR1 |= (7u << (3u * MIC_ADC_CH));
+    ADC1->SMPR1 = (ADC1->SMPR1 & ~(7u << (3u * MIC_ADC_CH)))
+                 | (4u << (3u * MIC_ADC_CH)); //ADC are nevoie de aprox 9.59us  
+
     ADC1->SQR1  =  (MIC_ADC_CH << 6u);
     
     ADC1->IER = ADC_IER_OVRIE;
@@ -56,7 +60,7 @@ void adc_start_audio_stream(void){
            | (11u << 6)   /* EXTSEL = 1011 = EXT11 = TIM2_TRGO        */
            | (1u << 10)   /* EXTEN  = 01 -> rising edge               */
            | (1u << 12)   /* OVRMOD = 1  -> overwrite on overrun      */
-           | (0u <<  1)   /* DMACFG = 1  -> DMA circular mode         */
+           | (1u <<  1)   /* DMACFG = 1  -> DMA circular mode         */
            | (1u <<  0);  /* DMAEN  = 1                               */
                           /* CONT stays 0: one conversion per trigger */
 
