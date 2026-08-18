@@ -9,10 +9,9 @@ add_executable(blinky.elf
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
-    src/system/system.c
-    src/drivers/gpio.c
-    src/dsp/decimate.c
-    src/dsp/fft.c
+    src/drivers/spi.c
+    src/drivers/ili9341.c
+    src/spectrum.c
     src/misc/MAX7219.c
     src/drivers/spi.c
     src/drivers/dma.c

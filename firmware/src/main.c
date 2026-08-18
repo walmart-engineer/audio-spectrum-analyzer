@@ -1,36 +1,38 @@
 #include "stm32f303xc.h"
 #include "drivers/adc.h"
 #include "drivers/delay.h"
-#include "system/system.h"  
-#include "drivers/gpio.h"
-#include "misc/MAX7219.h"
-#include "drivers/dma.h"
-#include "drivers/tim2.h"
+#include "drivers/spi.h"
+#include "drivers/ili9341.h"
+#include "spectrum.h"
 
 int main(void)
 {
-  uint8_t volatile button_pressed = 0u;
-  gpio_set('A',0, DIGITAL_IN);
-  gpio_set('A',1,ANALOG);
-  gpio_set('E', 9, DIGITAL_OUT);
-  adc_init(); //config ADC1
-  timer2_init(); //config TIM2
-  dac_init(); //config DAC, activ cererile DMA si umple dac_buffer cu 2048
-  dma_adc_init(); //config DMA1 pe canal 1
-  dma_dac_init(); //config DMA1 pe canal 3
-  adc_start_audio_stream(); //activeaza TIM2, ADC1 si DAC
-  
-  while (1){
-  if(gata)
-    {
-      gpio_write('E', 9, HIGH);
-      delay_ms(100);
+    delay_init();
+    SPI_Init();
+    SPI_DMA_Init();
 
-      while(!button_pressed) { 
-        button_pressed = gpio_digital_read('A', 0);
-      }
-    }
+    ILI9341_Init();
+    ILI9341_SetRotation(0);           /* landscape: 320×240 */
 
+    /* Draw the static purple axes and labels (once) */
+    Spectrum_DrawAxes();
+
+    /* --- demo: animated sweep so you can see the bars move ---------- */
+    uint8_t magnitudes[24] = {0};
+    uint8_t phase = 0;
+
+    for (;;) {
+        /* Generate a simple sine-ish sweep pattern for testing.
+           Replace this with real ADC/FFT data in production. */
+        for (uint8_t i = 0; i < 24; ++i) {
+            int16_t v = 255 - (int16_t)((uint16_t)(i * 11 + phase) % 256);
+            if (v < 0) v = -v;
+            magnitudes[i] = (uint8_t)v;
+        }
+
+        Spectrum_Update(magnitudes);
+        phase += 3;
+
+        delay_ms(1);      /* ~33 FPS target */
     }
-   
 }
