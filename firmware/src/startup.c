@@ -83,15 +83,13 @@ static const vector_t vector_table[16 + 82] = {
     PendSV_Handler,         /* 14: pendable service                    */
     SysTick_Handler,        /* 15: system tick timer                   */
     /* 16..97: device IRQs — added as needed                           */
-    [16 +  0] = 0,                  /* WWDG                            */
+    0,                  /* WWDG                            */
     /* ... IRQs 1-14 left as 0 (zero-filled by the compiler)            */
-    [16 + 15] = DMA1_Channel5_IRQHandler,   /* DMA1 Ch5: SPI2_TX       */
-    &PendSV_Handler,         /* 14: pendable service                    */
-    &SysTick_Handler,        /* 15: system tick timer                   */
-    /* 16..97: device IRQs — zero-filled for now, added as needed      */
     0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0,
     &DMA1_Channel1_ISR,
-    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 
+    &DMA1_Channel5_IRQHandler, 
+    0, 0,
     &ADC1_2_ISR,
 };
 
