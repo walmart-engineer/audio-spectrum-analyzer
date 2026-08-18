@@ -1,6 +1,16 @@
 #include "delay.h"
 
-#define TIMER_CLOCK_HZ     8000000u
+/*
+    The Timer Clock is derived from the APB1, but it has a special effect:
+        When the APB1 Clock is divided (RCC->CFGR |= RCC_CFGR_PPRE1_DIV2),
+        the timer clock gets multiplied by 2. This mechanism offers hardware
+        compensation for the APB1 shortcomings in maximum frequency.
+
+    Ex.     APB1_CLK = 32 MHz   ----->    TimerX_CLK = 64 MHz     (x = 2, 3, 4, 5, 6, 7)
+
+*/
+
+#define TIMER_CLOCK_HZ     64000000u
 #define TICK_HZ_MS         1000u        /* 100 us per count */    
 #define TICK_HZ_US         1000000u                 
 #define PSC_VALUE_MS       ((TIMER_CLOCK_HZ / TICK_HZ_MS) - 1u)

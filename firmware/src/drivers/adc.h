@@ -4,8 +4,19 @@
 #include <stdint.h> 
 #include "stm32f303xc.h"
 #include "drivers/delay.h"
+#include "config.h"
+#include "gpio.h"
 
-void ADC_Init(void); //initializare ADC + configurare
-uint16_t ADC_Read(void); //returneaza o conversie
+extern volatile uint16_t adc_buffer[2 * ADC_BUFFER_SIZE];
+
+
+void adc_init(void); //initializare ADC
+void adc_restart_audio_stream(void);
+void adc_start_audio_stream(void);
+void measure_vdda(uint32_t* vdda_mv);
+uint16_t adc_snapshot(void);
+
+
+void ADC1_2_ISR(void);
 
 #endif

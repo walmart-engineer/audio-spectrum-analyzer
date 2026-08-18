@@ -22,4 +22,5 @@ firmware/.vscode/*
 Thumbs.db
 .DS_Store
 firmware/.vscode/c_cpp_properties.json
+
 firmware/.vscode/c_cpp_properties.json

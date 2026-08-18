@@ -1,4 +1,3 @@
-
 #include "stm32f303xc.h"
 #include "drivers/adc.h"
 #include "drivers/delay.h"
@@ -6,7 +5,6 @@
 #include "drivers/ili9341.h"
 #include "spectrum.h"
 
-/* ---- main --------------------------------------------------------- */
 int main(void)
 {
     delay_init();
