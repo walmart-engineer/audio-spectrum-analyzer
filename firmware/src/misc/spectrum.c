@@ -120,7 +120,7 @@ void Spectrum_DrawAxes(void)
         ILI9341_DrawHLine(PLOT_X_ORIGIN - 4, py, 4, COLOR_PURPLE);
 
         /* Numeric label, right-aligned to the left of the tick */
-        draw_number_right(PLOT_X_ORIGIN - 5, py - 3, y_vals[i], COLOR_PURPLE);
+         draw_number_right(PLOT_X_ORIGIN - 5, py - 3, y_vals[i], COLOR_PURPLE);
     }
 
     /* ---- X-axis (horizontal line at the bottom of the plot) ----------- */
