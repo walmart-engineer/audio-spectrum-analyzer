@@ -5,6 +5,7 @@
 #include "drivers/ili9341.h"
 #include "misc/spectrum.h"
 #include "dsp/fft.h"
+#include "misc/textfont.h"
 
 int main(void)
 {

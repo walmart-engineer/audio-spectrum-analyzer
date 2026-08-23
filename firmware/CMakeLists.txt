@@ -18,9 +18,10 @@ add_executable(blinky.elf
     src/drivers/dac.c
     src/dsp/twiddle.c
     src/dsp/window.c
-    src/dsp/fft.c
     src/dsp/decimate.c
     src/system/system.c
+    src/dsp/fft.c
+    src/misc/textfont.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)
