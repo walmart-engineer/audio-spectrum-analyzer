@@ -4,6 +4,7 @@
 #include "drivers/spi.h"
 #include "drivers/ili9341.h"
 #include "misc/spectrum.h"
+#include "dsp/fft.h"
 #include "misc/textfont.h"
 
 int main(void)
@@ -17,8 +18,19 @@ int main(void)
 
     /* Draw the static purple axes and labels (once) */
     Spectrum_DrawAxes();
+
+    uint8_t magnitudes[24] = {0};
     
-    draw_string(50,50,"white");
-    
-   
+    while(1){
+
+        if(hop_ready){
+            hop_ready = 0;
+
+            frame_prepare(fft_sample_ring, start_index, fft_frame_re, fft_frame_im);
+            fft_radix2(fft_frame_re, fft_frame_im, FFT_FRAME_SIZE);
+            
+        }
+
+    }
+
 }
