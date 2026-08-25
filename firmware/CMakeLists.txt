@@ -6,22 +6,25 @@ set(CMAKE_C_STANDARD 11)
 add_executable(blinky.elf
     src/main.c
     src/startup.c
+    src/system/system.c
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
     src/drivers/spi.c
     src/drivers/ili9341.c
-    src/misc/spectrum.c
-    src/misc/MAX7219.c
     src/drivers/spi.c
     src/drivers/dma.c
     src/drivers/dac.c
+    src/drivers/gpio.c
     src/dsp/twiddle.c
     src/dsp/window.c
     src/dsp/decimate.c
-    src/system/system.c
     src/dsp/fft.c
     src/misc/textfont.c
+    src/misc/bands.c
+    src/misc/spectrum.c
+    src/misc/MAX7219.c
+    src/misc/button.c
 )
 
 target_include_directories(blinky.elf PRIVATE cmsis src)

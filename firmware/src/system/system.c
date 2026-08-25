@@ -1,5 +1,7 @@
 #include "system.h"
 
+int *__errno(void) { static int e = 0; return &e; }
+
 static volatile uint32_t g_micros;
 volatile struct fault_info g_fault;
 

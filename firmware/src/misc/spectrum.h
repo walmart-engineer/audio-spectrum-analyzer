@@ -32,6 +32,8 @@
 #define BAR_GAP             2       /* black gap between bars              */
 #define BAR_X_START         (PLOT_X_ORIGIN + 1)  /* first bar left edge   */
 
+extern const uint8_t font5x7[10][5];
+
 /* ---- API -------------------------------------------------------------- */
 
 /* Draw the static axes and labels (call once after init) */

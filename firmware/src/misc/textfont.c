@@ -97,8 +97,12 @@ void draw_char(uint16_t x, uint16_t y,char z)
 {
 
     uint8_t *glyph;
+
+    if(z >= '0' && z <= '9'){
+        glyph = font5x7[z - '0'];
+    }
     
-    if(z >= 'a' && z <= 'z'){
+    else if(z >= 'a' && z <= 'z'){
         glyph = font5x7_lower[z - 'a'];
     }
     else if(z >= 'A' && z <= 'Z'){

@@ -2,7 +2,7 @@
 
 volatile int16_t fft_sample_ring[FFT_SAMPLE_RING_SIZE];
 volatile float fft_frame_re[FFT_FRAME_SIZE / 2];
-volatile float ffr_frame_im[FFT_FRAME_SIZE / 2];
+volatile float fft_frame_im[FFT_FRAME_SIZE / 2];
 
 static volatile uint16_t last = 0u;
 volatile uint16_t start_index = 0u;

@@ -85,7 +85,7 @@ static const vector_t vector_table[16 + 82] = {
     /* 16..97: device IRQs — added as needed                           */
     0,                  /* WWDG                            */
     /* ... IRQs 1-14 left as 0 (zero-filled by the compiler)            */
-    0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0,
+    0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,
     &DMA1_Channel1_ISR,
     0, 0, 0, 
     &DMA1_Channel5_IRQHandler, 
@@ -123,6 +123,10 @@ void Reset_Handler(void)
     // while (!(RCC->CR & RCC_CR_HSERDY)) { }
 
     clock_init_64mhz_hsi();
+
+    *(volatile uint32_t *)0xE000ED88 |= (0xFu << 20);
+    __DSB();
+    __ISB();
 
     main();
 

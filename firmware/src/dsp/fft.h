@@ -16,7 +16,6 @@ void fft_ring_push(int16_t x);
 void frame_prepare(const int16_t *ring, uint32_t write_idx,
                    float *re, float *im);
 void wait_for_ring_init();
-static void bit_reverse(float* re, float* im, uint16_t n);
 void fft_radix2(float* re, float* im, uint16_t n);
 
 
