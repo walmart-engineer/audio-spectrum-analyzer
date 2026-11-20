@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(blinky C ASM)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(blinky.elf
     src/main.c
@@ -12,7 +13,6 @@ add_executable(blinky.elf
     src/drivers/spi.c
     src/drivers/ili9341.c
     src/misc/spectrum.c
-    src/misc/MAX7219.c
     src/drivers/spi.c
     src/drivers/dma.c
     src/drivers/dac.c
