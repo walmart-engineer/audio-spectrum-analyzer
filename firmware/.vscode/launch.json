@@ -12,7 +12,7 @@
             "request": "launch",
             "servertype": "openocd",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/blinky.elf",
+            "executable": "${workspaceFolder}/build/spectralyzer.elf",
             "device": "STM32F303VC",
             "configFiles": [
                 "board/stm32f3discovery.cfg"
