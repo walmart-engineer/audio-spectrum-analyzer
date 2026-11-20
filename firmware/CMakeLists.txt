@@ -10,7 +10,6 @@ add_executable(blinky.elf
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
-    src/drivers/spi.c
     src/drivers/ili9341.c
     src/misc/spectrum.c
     src/drivers/spi.c
