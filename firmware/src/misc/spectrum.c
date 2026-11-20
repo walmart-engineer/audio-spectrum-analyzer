@@ -19,7 +19,7 @@
 /* Each glyph is 5 columns × 7 rows, stored column-major: font5x7[ch][col].
    Bit 0 = top row, bit 6 = bottom row.  '1' = foreground pixel.           */
 
-static const uint8_t font5x7[10][5] = {
+const uint8_t font5x7[10][5] = {
     /* 0 */ {0x3E, 0x51, 0x49, 0x45, 0x3E},
     /* 1 */ {0x00, 0x42, 0x7F, 0x40, 0x00},
     /* 2 */ {0x42, 0x61, 0x51, 0x49, 0x46},
