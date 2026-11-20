@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(blinky C ASM)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(blinky.elf
     src/main.c
@@ -10,7 +11,6 @@ add_executable(blinky.elf
     src/drivers/tim2.c
     src/drivers/delay.c
     src/drivers/adc.c
-    src/drivers/spi.c
     src/drivers/ili9341.c
     src/drivers/spi.c
     src/drivers/dma.c
